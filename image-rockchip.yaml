@@ -1,0 +1,130 @@
+{{ $architecture := or .architecture "arm64" }}
+{{ $suite := or .suite "bookworm" }}
+{{ $ospack := or .ospack (printf "ospack-debian-%s-%s" $architecture $suite) }}
+{{ $imagesize := or .imagesize "2GB" }}
+{{ $platform := or .platform "unknown" }}
+{{ $cmdline := or .cmdline "rootwait" }}
+{{ $image := or .image (printf "image-rockchip-%s" $platform) }}
+
+# TODO ability to install u-boot from experimental
+# TODO ability to install kernel from experimental
+# TODO allow user to specify own extlinux entries (e.g. no rootfs)
+# TODO copy usb loader to artifact dir
+
+architecture: {{ $architecture }}
+
+actions:
+  - action: unpack
+    description: Unpack ospack
+    file: {{ $ospack }}.tar.gz
+
+  # TODO create separate /boot (~256M)
+  - action: image-partition
+    imagename: {{ $image }}.img
+    imagesize: {{ $imagesize }}
+    partitiontype: gpt
+    mountpoints:
+      - mountpoint: /
+        partition: root
+    # TODO double check against rockchip wiki for partition layout
+    partitions:
+      - name: loader1
+        fs: none
+        start: 64s
+        end: 7168s
+        # TODO other recipe had end: 8063s
+      - name: loader2
+        fs: none
+        start: 16384s
+        end: 24575s
+      #- name: trust
+      #  fs: none
+      #  start: 24576S
+      #  end: 32767S
+      #- name: boot
+      #  fs: fat32
+      #  start: 32768S
+      #  end: $bootpartitionend
+      #  flags: [ boot, esp ]
+      - name: root
+        fs: ext4
+        start: 32768s  # 16M
+        end: 100%
+        flags: [ boot ]
+
+  - action: filesystem-deploy
+    setup-fstab: true
+    setup-kernel-cmdline: true
+    append-kernel-cmdline: {{ $cmdline }}
+
+  - action: run
+    description: Set hostname to debian-rockchip-{{ $platform }}
+    command: echo "debian-rockchip-{{ $platform }}" > ${ROOTDIR}/etc/hostname
+
+  - action: apt
+    description: Install u-boot-menu
+    packages:
+      - u-boot-menu
+
+  - action: apt
+    description: Install initramfs-tools
+    packages:
+      - initramfs-tools
+
+  # TODO allow user to install own u-boot package/binaries
+  - action: apt
+    description: Install u-boot-rockchip
+    packages:
+      - u-boot-rockchip
+
+  # TODO not needed with u-boot-menu from >bookworm ?
+  #- action: run
+  #  description: Set u-boot configuration
+  #  label: sed
+  #  command: sed -i '/^#U_BOOT_PARAMETERS=/d' ${ROOTDIR}/etc/default/u-boot ;
+  #           echo 'U_BOOT_PARAMETERS="root=LABEL=rootfs"' >> ${ROOTDIR}/etc/default/u-boot ;
+  #           cat ${ROOTDIR}/etc/default/u-boot
+
+  # TODO earlycon ?
+  # for rk3328
+  # console=ttyS2,1500000n8 earlycon=uart8250,mmio32,0xff130000
+
+  # TODO allow user to install own kernel package
+  - action: apt
+    description: Install kernel
+    packages:
+      - linux-image-arm64
+
+  # TODO do we need to run u-boot-update with custom kernel pkg ?
+  #- action: run
+  #  chroot: true
+  #  command: u-boot-update
+
+  - action: run
+    description: Check extlinux contents
+    command: cat ${ROOTDIR}/boot/extlinux/extlinux.conf
+
+  - action: raw
+    description: Flash idbloader.img to loader1
+    origin: filesystem
+    source: /usr/lib/u-boot/{{ $platform }}/idbloader.img
+    partition: loader1
+    offset: 0
+
+  - action: raw
+    description: Flash u-boot.itb to loader2
+    origin: filesystem
+    source: /usr/lib/u-boot/{{ $platform }}/u-boot.itb
+    partition: loader2
+    offset: 0
+
+  - action: run
+    description: Create block map for {{ $image }}.img
+    chroot: false
+    postprocess: true
+    command: bmaptool create $ARTIFACTDIR/{{ $image }}.img > $ARTIFACTDIR/{{ $image }}.bmap
+
+  - action: run
+    description: Compress {{ $image }}.img
+    postprocess: true
+    command: pigz -f $ARTIFACTDIR/{{ $image }}.img

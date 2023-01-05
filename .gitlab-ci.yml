@@ -1,0 +1,77 @@
+stages:
+  - ospack
+  - image
+
+.debos:
+  stage: image
+  image:
+    name: ghcr.io/go-debos/debos:main
+    entrypoint: [ "" ]
+  tags:
+    - kvm
+  before_script:
+    - mkdir -p out
+  artifacts:
+    # TODO verify artifact name
+    #name: image
+    paths:
+      - out
+
+
+# Debian ospacks
+.ospack:
+  extends: .debos
+  stage: ospack
+  variables:
+    ARCHITECTURE: unknown
+    SUITE: unknown
+  script:
+    - debos --artifactdir=out
+            -t architecture:$ARCHITECTURE
+            -t suite:$SUITE
+            ospack-debian.yaml
+
+ospack-arm64-bookworm:
+  extends: .ospack
+  variables:
+    ARCHITECTURE: arm64
+    SUITE: bookworm
+
+ospack-arm64-unstable:
+  extends: .ospack
+  variables:
+    ARCHITECTURE: arm64
+    SUITE: unstable
+
+
+# Rockchip images
+.image-rockchip-unstable:
+  extends: .debos
+  stage: image
+  needs:
+    - ospack-arm64-unstable
+  variables:
+    ARCHITECTURE: arm64
+    SUITE: unstable
+    PLATFORM: unknown
+  script:
+    - debos --artifactdir=out
+            -t architecture:$ARCHITECTURE
+            -t suite:$SUITE
+            -t platform:$PLATFORM
+            image-rockchip.yaml
+
+image-rockchip-unstable-roc-pc-rk3399:
+  extends: .image-rockchip-unstable
+  variables:
+    PLATFORM: roc-pc-rk3399
+
+image-rockchip-unstable-rock-pi-4-rk3399:
+  extends: .image-rockchip-unstable
+  variables:
+    PLATFORM: rock-pi-4-rk3399
+
+image-rockchip-unstable-rock-pi-e-rk3328:
+  extends: .image-rockchip-unstable
+  variables:
+    PLATFORM: rock-pi-e-rk3328
