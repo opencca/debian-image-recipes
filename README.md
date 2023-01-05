@@ -25,7 +25,7 @@ The first stage is to build a generic (but architecture-specific) ospack, then
 assemble the ospack into multiple hardware-specifc images.
 
 The following example commands build generic images for both the [ROCK Pi 4](https://rockpi.org/rockpi4)
-and the [Firefly ROC-RK3399-PC]().
+and the [Firefly ROC-RK3399-PC](https://en.t-firefly.com/product/rocrk3399pc).
 
 These images should boot when flashed to an SD card.
 
