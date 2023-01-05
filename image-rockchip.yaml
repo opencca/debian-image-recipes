@@ -6,8 +6,9 @@
 {{ $cmdline := or .cmdline "rootwait" }}
 {{ $image := or .image (printf "image-rockchip-%s" $platform) }}
 
-# TODO ability to install u-boot from experimental
-# TODO ability to install kernel from experimental
+{{ $experimental_kernel := or .experimental_kernel "false" }}
+{{ $experimental_uboot := or .experimental_uboot "false" }}
+
 # TODO allow user to specify own extlinux entries (e.g. no rootfs)
 # TODO copy usb loader to artifact dir
 
@@ -71,11 +72,18 @@ actions:
     packages:
       - initramfs-tools
 
+{{ if eq $experimental_uboot "true" }}
+  - action: run
+    chroot: true
+    description: Install u-boot-rockchip from experimental
+    script: scripts/install-experimental.sh u-boot-rockchip
+{{ else }}
   # TODO allow user to install own u-boot package/binaries
   - action: apt
-    description: Install u-boot-rockchip
+    description: Install u-boot-rockchip from {{ $suite }}
     packages:
       - u-boot-rockchip
+{{ end }}
 
   # TODO not needed with u-boot-menu from >bookworm ?
   #- action: run
@@ -89,11 +97,18 @@ actions:
   # for rk3328
   # console=ttyS2,1500000n8 earlycon=uart8250,mmio32,0xff130000
 
+{{ if eq $experimental_kernel "true" }}
+  - action: run
+    chroot: true
+    description: Install linux-image-arm64 from experimental
+    script: scripts/install-experimental.sh linux-image-arm64
+{{ else }}
   # TODO allow user to install own kernel package
   - action: apt
-    description: Install kernel
+    description: Install kernel from {{ $suite }}
     packages:
       - linux-image-arm64
+{{ end }}
 
   # TODO do we need to run u-boot-update with custom kernel pkg ?
   #- action: run

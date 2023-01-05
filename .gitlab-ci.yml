@@ -75,3 +75,29 @@ image-rockchip-unstable-rock-pi-e-rk3328:
   extends: .image-rockchip-unstable
   variables:
     PLATFORM: rock-pi-e-rk3328
+
+.image-rockchip-experimental:
+  extends: .image-rockchip-unstable
+  script:
+    - debos --artifactdir=out
+            -t architecture:$ARCHITECTURE
+            -t suite:$SUITE
+            -t platform:$PLATFORM
+            -t experimental_uboot:true
+            -t experimental_kernel:true
+            image-rockchip.yaml
+
+image-rockchip-experimental-roc-pc-rk3399:
+  extends: .image-rockchip-experimental
+  variables:
+    PLATFORM: roc-pc-rk3399
+
+image-rockchip-experimental-rock-pi-4-rk3399:
+  extends: .image-rockchip-experimental
+  variables:
+    PLATFORM: rock-pi-4-rk3399
+
+image-rockchip-experimental-rock-pi-e-rk3328:
+  extends: .image-rockchip-experimental
+  variables:
+    PLATFORM: rock-pi-e-rk3328
