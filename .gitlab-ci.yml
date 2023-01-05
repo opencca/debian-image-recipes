@@ -12,8 +12,7 @@ stages:
   before_script:
     - mkdir -p out
   artifacts:
-    # TODO verify artifact name
-    #name: image
+    expire_in: 1 week
     paths:
       - out
 
