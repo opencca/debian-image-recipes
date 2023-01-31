@@ -11,18 +11,15 @@ actions:
     components:
       - main
     mirror: https://deb.debian.org/debian
-    variant: minbase
 
   - action: run
     description: Set hostname to debian-{{ $suite }}
     command: echo "{{ $suite }}" > ${ROOTDIR}/etc/hostname
 
   - action: apt
-    description: Install some packages
+    description: Allow HTTPS in APT
     packages:
-      - sudo
-      - openssh-server
-      - adduser
+      - apt-transport-https
 
   - action: apt
     description: Install systemd
@@ -31,10 +28,58 @@ actions:
       - systemd-sysv
       - udev
 
+  - action: apt
+    description: Install systemd-resolved
+    packages:
+      - systemd-resolved
+
+  - action: apt
+    description: Install systemd-timesyncd
+    packages:
+      - systemd-timesyncd
+
+  - action: overlay
+    description: Enable DHCP IP on Ethernet connections
+    source: overlays/network-wired
+
+  - action: run
+    description: Enable systemd-networkd
+    chroot: true
+    command: systemctl enable systemd-networkd
+
+  - action: apt
+    description: Install packages for scripts/setup-user.sh
+    packages:
+      - sudo
+      - adduser
+
   - action: run
     description: Setup user
     chroot: true
     script: scripts/setup-user.sh
+
+  - action: apt
+    description: Install basic userspace packages
+    packages:
+      - vim-tiny
+
+  - action: apt
+    description: Install hardware debugging packages
+    packages:
+      - iproute2
+      - iputils-ping
+      - traceroute
+      - usbutils
+
+  - action: apt
+    description: Install some additional useful packages
+    packages:
+      - zstd
+
+  - action: apt
+    description: Install SSH server
+    packages:
+      - openssh-server
 
   - action: pack
     description: Pack into tarball
