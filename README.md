@@ -1,37 +1,33 @@
-# debian-image-recipes
+# debian-image-recipes for Rockchip RK3588 boards
 
-A collection of Debos recipes to build Debian images for various targets.
+Debos recipes to build Debian images for Rockchip rk3588-based boards.
 
-By default the recipes support Bookworm (i.e. the latest testing) and would need
-additional modifications to support Bullseye.
+These images should boot when flashed to an SD card or eMMC.
 
-## Contribution
-Contributions welcome in form of issues for bugs or merge requests for patches.
+## Prebuilt images
+See the [CI/CD pipelines](https://gitlab.collabora.com/hardware-enablement/rockchip-3588/-/pipelines)
+to download prebuilt images for your target.
+
 
 ## System requirements
-On a Debian (bookwork preferred) system, install debos:
+On a Debian (bookworm preferred) system, install debos:
 ```bash
 $ sudo apt install debos
 ```
 
-## Prebuilt images
-See the [CI/CD pipelines](https://gitlab.collabora.com/obbardc/debian-image-recipes/-/pipelines)
-to download prebuilt images for your target.
 
 ## Locally build images
-The image recipes support multiple platforms.
-
 The first stage is to build a generic (but architecture-specific) ospack, then
-assemble the ospack into multiple hardware-specifc images.
+assemble the ospack into multiple hardware-specific images.
 
-The following example commands build generic images for both the [ROCK Pi 4](https://rockpi.org/rockpi4)
-and the [Firefly ROC-RK3399-PC](https://en.t-firefly.com/product/rocrk3399pc).
+Linux kernel and u-boot binaries for your specific platform needs to be copied
+into the `prebuilt` directory. See `download-rk3588-artifacts.sh` for the directory
+layout.
 
-These images should boot when flashed to an SD card.
 
 ```bash
+$ ./download-rk3588-artifacts.sh
 $ mkdir out
 $ debos --artifactdir=out -t architecture:arm64 ospack-debian.yaml
-$ debos --artifactdir=out -t architecture:arm64 -t platform:rock-pi-4-rk3399 image-rockchip.yaml
-$ debos --artifactdir=out -t architecture:arm64 -t platform:roc-pc-rk3399 image-rockchip.yaml
+$ debos --artifactdir=out -t architecture:arm64 -t platform:rock5b-rk3588 image-rockchip-rk3588.yaml
 ```
