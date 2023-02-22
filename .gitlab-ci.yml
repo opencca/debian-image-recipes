@@ -1,5 +1,4 @@
 stages:
-  - ospack
   - image
 
 .debos:
@@ -16,87 +15,25 @@ stages:
     paths:
       - out
 
-
-# Debian ospacks
-.ospack:
+rk3588 images:
   extends: .debos
-  stage: ospack
+  stage: image
   variables:
-    ARCHITECTURE: unknown
-    SUITE: unknown
+    ARCHITECTURE: arm64
+    SUITE: bookworm
   script:
+    # download u-boot and kernel from GitLab artifacts
+    - ./download-rk3588-artifacts.sh
+
+    # ospack
     - debos --artifactdir=out
             -t architecture:$ARCHITECTURE
             -t suite:$SUITE
             ospack-debian.yaml
 
-ospack-arm64-bookworm:
-  extends: .ospack
-  variables:
-    ARCHITECTURE: arm64
-    SUITE: bookworm
-
-ospack-arm64-unstable:
-  extends: .ospack
-  variables:
-    ARCHITECTURE: arm64
-    SUITE: unstable
-
-
-# Rockchip images
-.image-rockchip-unstable:
-  extends: .debos
-  stage: image
-  needs:
-    - ospack-arm64-unstable
-  variables:
-    ARCHITECTURE: arm64
-    SUITE: unstable
-    PLATFORM: unknown
-  script:
+    # rock5b-rk3588 image
     - debos --artifactdir=out
             -t architecture:$ARCHITECTURE
             -t suite:$SUITE
-            -t platform:$PLATFORM
-            image-rockchip.yaml
-
-image-rockchip-unstable-roc-pc-rk3399:
-  extends: .image-rockchip-unstable
-  variables:
-    PLATFORM: roc-pc-rk3399
-
-image-rockchip-unstable-rock-pi-4-rk3399:
-  extends: .image-rockchip-unstable
-  variables:
-    PLATFORM: rock-pi-4-rk3399
-
-image-rockchip-unstable-rock-pi-e-rk3328:
-  extends: .image-rockchip-unstable
-  variables:
-    PLATFORM: rock-pi-e-rk3328
-
-.image-rockchip-experimental:
-  extends: .image-rockchip-unstable
-  script:
-    - debos --artifactdir=out
-            -t architecture:$ARCHITECTURE
-            -t suite:$SUITE
-            -t platform:$PLATFORM
-            -t experimental_uboot:true
-            -t experimental_kernel:true
-            image-rockchip.yaml
-
-image-rockchip-experimental-roc-pc-rk3399:
-  extends: .image-rockchip-experimental
-  variables:
-    PLATFORM: roc-pc-rk3399
-
-image-rockchip-experimental-rock-pi-4-rk3399:
-  extends: .image-rockchip-experimental
-  variables:
-    PLATFORM: rock-pi-4-rk3399
-
-image-rockchip-experimental-rock-pi-e-rk3328:
-  extends: .image-rockchip-experimental
-  variables:
-    PLATFORM: rock-pi-e-rk3328
+            -t platform:rock5b-rk3588
+            image-rockchip-rk3588.yaml
