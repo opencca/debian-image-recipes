@@ -5,7 +5,7 @@ Debos recipes to build Debian images for Rockchip rk3588-based boards.
 These images should boot when flashed to an SD card or eMMC.
 
 ## Prebuilt images
-See the [CI/CD pipelines](https://gitlab.collabora.com/hardware-enablement/rockchip-3588/-/pipelines)
+See the [CI/CD pipelines](https://gitlab.collabora.com/hardware-enablement/rockchip-3588/debian-image-recipes/-/pipelines)
 to download prebuilt images for your target. Extract the archive somewhere.
 
 ## Install to SD card
