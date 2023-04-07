@@ -2,7 +2,9 @@
 
 Debos recipes to build Debian images for Rockchip rk3588-based boards.
 
-These images should boot when flashed to an SD card or eMMC.
+Currently, only the ROCK 5 Model B is supported by the images.
+
+These images can be flashed to an SD card or eMMC.
 
 ## Prebuilt images
 See the [CI/CD pipelines](https://gitlab.collabora.com/hardware-enablement/rockchip-3588/debian-image-recipes/-/pipelines)
@@ -21,8 +23,7 @@ Rust crate. It can be installed with:
 $ cargo install rockusb --example rockusb
 ```
 
-Press the board's maskrom button before applying power. Once the board is in
-maskrom mode, release the button.
+Press & hold the board's [maskrom button](https://gitlab.collabora.com/hardware-enablement/rockchip-3588/notes-for-rockchip-3588/-/blob/main/rock5b-rk3588.md#maskrom) before applying power. Once the board is in maskrom mode, release the button.
 
 ```
 $ rockusb list
