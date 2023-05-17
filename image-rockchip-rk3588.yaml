@@ -54,6 +54,26 @@ actions:
     packages:
       - initramfs-tools
 
+  - action: apt
+    description: Install alsa-ucm-conf
+    packages:
+      - alsa-ucm-conf
+
+  - action: apt
+    description: Install alsa-utils
+    packages:
+      - alsa-utils
+
+  #
+  # Eventually this will be part of the upstream alsa-ucm-conf package
+  # once the related alsa-project PR will be reviewed and merged:
+  #
+  #   https://github.com/alsa-project/alsa-ucm-conf/pull/316
+  #
+  - action: overlay
+    description: Enable Rock 5B analog audio
+    source: overlays/alsa-ucm
+
   - action: run
     command: mkdir -p ${ROOTDIR}/opt/linux
 
