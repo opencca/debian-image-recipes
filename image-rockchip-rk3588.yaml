@@ -96,16 +96,16 @@ actions:
     command: cat ${ROOTDIR}/boot/extlinux/extlinux.conf
 
   - action: raw
-    description: Flash idblock.bin to loader1
+    description: Flash idbloader.img to loader1
     origin: recipe
-    source: prebuilt/u-boot-{{ $platform }}/idblock.bin
+    source: prebuilt/u-boot-{{ $platform }}/idbloader.img
     partition: loader1
     offset: 0
 
   - action: raw
-    description: Flash uboot.img to loader2
+    description: Flash u-boot.itb to loader2
     origin: recipe
-    source: prebuilt/u-boot-{{ $platform }}/uboot.img
+    source: prebuilt/u-boot-{{ $platform }}/u-boot.itb
     partition: loader2
     offset: 0
 
