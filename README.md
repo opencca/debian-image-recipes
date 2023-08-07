@@ -10,18 +10,26 @@ These images can be flashed to an SD card or eMMC.
 See the [CI/CD pipelines](https://gitlab.collabora.com/hardware-enablement/rockchip-3588/debian-image-recipes/-/pipelines)
 to download prebuilt images for your target. Extract the archive somewhere.
 
-## Install to SD card
-Copy the image to an SD card using `bmaptool`:
-```
-$ bmaptool copy image-rockchip-rock5b-rk3588.img.gz /dev/mmcblk0
-```
-
-## Install to eMMC
+## RockUSB
 It is recommended to use `rockusb` from the [rockchiprs](https://github.com/collabora/rockchiprs)
-Rust crate. It can be installed with:
+Rust crate to flash the images to the board. It can be installed with:
 ```
 $ cargo install rockusb --example rockusb
 ```
+
+## Remove preinstalled bootloader from SPI Flash
+The ROCK 5 Model B comes with an old vendor bootloader installed on the
+SPI Flash which can cause incompatibilities with these mainline-based
+images. To remove the bootloader from the SPI flash, remove the eMMC,
+press the [maskrom button](https://gitlab.collabora.com/hardware-enablement/rockchip-3588/notes-for-rockchip-3588/-/blob/main/rock5b-rk3588.md#maskrom),
+plug the board into USB port and run:
+
+```
+$ rkdeveloptool db rk3588_spl_loader_v1.08.111.bin
+$ rkdeveloptool ef
+```
+
+## Install to eMMC
 
 Press & hold the board's [maskrom button](https://gitlab.collabora.com/hardware-enablement/rockchip-3588/notes-for-rockchip-3588/-/blob/main/rock5b-rk3588.md#maskrom) before applying power. Once the board is in maskrom mode, release the button.
 
@@ -41,6 +49,12 @@ Done!... waiting 0ms
 $ rockusb write-bmap image-rockchip-rock5b-rk3588.img.gz
 
 $ rockusb reset
+```
+
+## Install to SD card
+Copy the image to an SD card using `bmaptool`:
+```
+$ bmaptool copy image-rockchip-rock5b-rk3588.img.gz /dev/mmcblk0
 ```
 
 ## System requirements
