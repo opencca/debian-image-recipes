@@ -20,6 +20,7 @@ actions:
     mountpoints:
       - mountpoint: /
         partition: root
+        options: [ x-systemd.growfs ]
     partitions:
       - name: loader1
         fs: none
@@ -43,6 +44,10 @@ actions:
   - action: run
     description: Set hostname to debian-rockchip-{{ $platform }}
     command: echo "debian-rockchip-{{ $platform }}" > ${ROOTDIR}/etc/hostname
+
+  - action: overlay
+    description: "Configure systemd-repart to grow / at first boot"
+    source: overlays/grow-rootfs
 
   - action: apt
     description: Install u-boot-menu
