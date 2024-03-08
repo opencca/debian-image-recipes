@@ -5,4 +5,8 @@ adduser --gecos user \
   --shell /bin/bash \
   user
 adduser user sudo
+adduser user video
+adduser user render
+adduser user input
+adduser user audio
 echo "user:user" | chpasswd
