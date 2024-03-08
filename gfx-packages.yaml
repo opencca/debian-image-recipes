@@ -1,0 +1,33 @@
+architecture: "arm64"
+
+actions:
+  - action: apt
+    description: Install graphics packages
+    packages:
+     - libdrm-dev
+     - libgbm1
+     - libgbm-dev
+     - libglx-mesa0
+     - libgl1-mesa-dri
+     - libegl-mesa0
+     - libglapi-mesa
+
+  - action: apt
+    description: Install media packages
+    packages:
+     - gir1.2-gst-plugins-bad-1.0
+     - gstreamer1.0-alsa
+     - gstreamer1.0-plugins-bad
+     - gstreamer1.0-plugins-base-apps
+     - gstreamer1.0-rockchip1
+     - libasound2-dev
+     - libevdev2
+     - libfaad-dev
+     - libgstreamer-plugins-bad1.0-0
+     - librockchip-mpp1
+     - librockchip-vpu0
+
+  - action: overlay
+    description: Install mali firmware
+    source: overlays/mali-firmware
+

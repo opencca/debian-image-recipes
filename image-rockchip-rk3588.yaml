@@ -1,7 +1,7 @@
 {{ $architecture := or .architecture "arm64" }}
 {{ $suite := or .suite "bookworm" }}
 {{ $ospack := or .ospack (printf "ospack-debian-%s-%s" $architecture $suite) }}
-{{ $imagesize := or .imagesize "2GB" }}
+{{ $imagesize := or .imagesize "4GB" }}
 {{ $platform := or .platform "unknown" }}
 {{ $cmdline := or .cmdline "rootwait" }}
 {{ $image := or .image (printf "image-rockchip-%s" $platform) }}

@@ -1,6 +1,7 @@
 {{ $architecture := or .architecture "amd64" }}
 {{ $suite := or .suite "bookworm" }}
 {{ $ospack := or .ospack (printf "ospack-debian-%s-%s" $architecture $suite) }}
+{{ $gfx := or .gfx "true" }}
 
 architecture: {{ $architecture }}
 
@@ -84,11 +85,18 @@ actions:
     description: Install some additional useful packages
     packages:
       - zstd
+      - unzip
+      - curl
 
   - action: apt
     description: Install SSH server
     packages:
       - openssh-server
+
+{{- if eq $gfx "true" }}
+  - action: recipe
+    recipe: gfx-packages.yaml
+{{- end }}
 
   - action: pack
     description: Pack into tarball
