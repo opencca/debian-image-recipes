@@ -1,0 +1,70 @@
+{{- $architecture := or .architecture "arm64" -}}
+{{- $suite := or .suite "bookworm" -}}
+{{- $basename := or .basename (printf "%s-rootfs-%s" $suite $architecture) -}}
+
+architecture: {{ $architecture }}
+
+actions:
+  - action: recipe
+    recipe: ci-common-rootfs.yaml
+
+  - action: apt
+    description: Add package to create an initramfs
+    packages:
+      - initramfs-tools
+
+  - action: apt
+    description: Add package to help with tests
+    packages:
+      # CPU stress testing
+      - stress-ng
+      # Image write tests
+      - bmap-tools
+
+  - action: run
+    description: Create fake kernel config to please mkinitramfs
+    chroot: true
+    command: echo "CONFIG_RD_GZIP=y" > /boot/config-`uname -r`
+
+  - action: run
+    description: Create a base kernel-less initramfs
+    chroot: true
+    command: mkinitramfs -o /boot/initramfs
+
+  - action: run
+    description: Drop apt cache files
+    chroot: true
+    script: scripts/remove-apt-caches.sh
+
+  - action: run
+    chroot: false
+    command: mv ${ROOTDIR}/boot/initramfs ${ARTIFACTDIR}/{{ $basename }}-initramfs.gz
+
+  - action: pack
+    compression: gz
+    file: {{ $basename -}}.tar.gz
+
+  - action: image-partition
+    imagename: {{ $basename -}}.img
+    imagesize: 1G
+    partitiontype: gpt
+    mountpoints:
+      - mountpoint: /
+        partition: rootfs
+    partitions:
+      - name: rootfs
+        fs: ext4
+        start: 0%
+        end: 100%
+
+  - action: filesystem-deploy
+
+  - action: run
+    description: Create block map
+    postprocess: true
+    command: bmaptool create ${ARTIFACTDIR}/{{ $basename }}.img > ${ARTIFACTDIR}/{{ $basename }}.img.bmap
+
+  - action: run
+    description: Compress image
+    postprocess: true
+    command: gzip -f ${ARTIFACTDIR}/{{ $basename }}.img

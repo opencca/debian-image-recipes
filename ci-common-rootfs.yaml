@@ -1,0 +1,84 @@
+{{- $architecture := or .architecture "arm64" -}}
+{{- $suite := or .suite "bookworm" -}}
+architecture: {{ $architecture }}
+
+actions:
+  - action: debootstrap
+    suite: {{ $suite }}
+    components:
+      - main
+    mirror: http://deb.debian.org/debian
+    merged-usr: true
+    variant: minbase
+
+  - action: overlay
+    descriptions: Add CI specific overlay
+    source: overlays/ci-base-overlay
+
+  - action: run
+    description: clean unneeded data
+    command: "rm -rf /usr/share/{doc,info,locale,man}/*"
+
+  - action: apt
+    packages:
+      - sudo
+      - libnss-myhostname
+      - udev
+      - dbus
+      - systemd-resolved
+      - systemd-sysv
+      - systemd-timesyncd
+      - iproute2
+      - net-tools
+      - psmisc
+      - netcat-openbsd
+      - wget
+      - evtest
+      - usbutils
+      - pciutils
+      - v4l-utils
+      - i2c-tools
+      - bsdextrautils
+      - lm-sensors
+      - libiio-utils
+
+  - action: run
+    description: Enable systemd network services
+    chroot: true
+    command: |
+      systemctl enable systemd-networkd
+      systemctl enable systemd-networkd-wait-online
+      systemctl enable systemd-resolved
+      ln -sf /run/systemd/resolve/resolv.conf /etc/resolv.conf
+
+  - action: run
+    description: Mount tmp as tmpfs
+    chroot: true
+    command: |
+      cp /usr/share/systemd/tmp.mount /etc/systemd/system
+      systemctl enable tmp.mount
+      cp /usr/share/systemd/tmp.mount /etc/systemd/system/var-tmp.mount
+      sed -i 's,/tmp,/var/tmp,g' /etc/systemd/system/var-tmp.mount
+      systemctl enable var-tmp.mount
+
+  - action: run
+    description: Create user
+    chroot: true
+    script: scripts/setup-user.sh
+
+  - action: run
+    description: Drop apt cache files
+    chroot: true
+    script: scripts/remove-apt-caches.sh
+
+  - action: overlay
+    descriptions: Add CI specific overlay
+    source: overlays/ci-overlay
+
+  - action: run
+    description: Fix sudo config permissions
+    chroot: true
+    command: |
+      chown -R root:root /etc/sudoers.d
+      chmod 755 /etc/sudoers.d
+      chmod 644 /etc/sudoers.d/*

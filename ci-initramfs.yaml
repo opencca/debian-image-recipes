@@ -1,0 +1,22 @@
+{{- $architecture := or .architecture "arm64" -}}
+{{- $suite := or .suite "bookworm" -}}
+{{- $basename := or .basename (printf "%s-initramfs-%s" $suite $architecture) -}}
+architecture: {{ $architecture }}
+actions:
+  - action: recipe
+    recipe: ci-common-rootfs.yaml
+  - action: run
+    description: Drop apt cache files
+    chroot: true
+    script: scripts/remove-apt-caches.sh
+  - action: run
+    description: Put init in the correct place for an initrmfs
+    chroot: true
+    command: ln -s /sbin/init /init
+  - action: run
+    description: Create cpio archive
+    chroot: false
+    command: |
+      cd ${ROOTDIR}
+      find . -print | cpio -oH newc >  ${ARTIFACTDIR}/{{ $basename }}.cpio
+      gzip -f ${ARTIFACTDIR}/{{ $basename }}.cpio

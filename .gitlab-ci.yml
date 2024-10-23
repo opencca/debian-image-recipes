@@ -25,6 +25,18 @@ rk3588 images:
     # download u-boot and kernel from GitLab artifacts
     - ./download-rk3588-artifacts.sh
 
+    # initramfs for CI
+    - debos --artifactdir=out
+            -t architecture:$ARCHITECTURE
+            -t suite:$SUITE
+            ci-initramfs.yaml
+
+    # rootfs for CI
+    - debos --artifactdir=out
+            -t architecture:$ARCHITECTURE
+            -t suite:$SUITE
+            ci-rootfs.yaml
+
     # ospack
     - debos --artifactdir=out
             -t architecture:$ARCHITECTURE
