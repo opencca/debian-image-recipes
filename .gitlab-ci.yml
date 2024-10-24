@@ -20,7 +20,7 @@ rk3588 images:
   stage: image
   variables:
     ARCHITECTURE: arm64
-    SUITE: bookworm
+    SUITE: trixie
   script:
     # download u-boot and kernel from GitLab artifacts
     - ./download-rk3588-artifacts.sh

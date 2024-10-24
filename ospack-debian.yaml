@@ -1,5 +1,5 @@
 {{ $architecture := or .architecture "amd64" }}
-{{ $suite := or .suite "bookworm" }}
+{{ $suite := or .suite "trixie" }}
 {{ $ospack := or .ospack (printf "ospack-debian-%s-%s" $architecture $suite) }}
 {{ $gfx := or .gfx "true" }}
 

@@ -1,5 +1,5 @@
 {{ $architecture := or .architecture "arm64" }}
-{{ $suite := or .suite "bookworm" }}
+{{ $suite := or .suite "trixie" }}
 {{ $ospack := or .ospack (printf "ospack-debian-%s-%s" $architecture $suite) }}
 {{ $imagesize := or .imagesize "2GB" }}
 {{ $platform := or .platform "unknown" }}

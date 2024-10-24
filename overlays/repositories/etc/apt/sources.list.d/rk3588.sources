@@ -1,6 +1,6 @@
 Types: deb
 URIs: https://repositories.core.collabora.dev/rk3588
-Suites: bookworm
+Suites: trixie
 Components: main
 Signed-By: /etc/apt/trusted.gpg.d/collabora-archive-keyring.gpg
 

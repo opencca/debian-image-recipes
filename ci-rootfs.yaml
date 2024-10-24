@@ -1,5 +1,5 @@
 {{- $architecture := or .architecture "arm64" -}}
-{{- $suite := or .suite "bookworm" -}}
+{{- $suite := or .suite "trixie" -}}
 {{- $basename := or .basename (printf "%s-rootfs-%s" $suite $architecture) -}}
 
 architecture: {{ $architecture }}
