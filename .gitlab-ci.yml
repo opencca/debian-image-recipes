@@ -15,16 +15,13 @@ stages:
     paths:
       - out
 
-rk3588 images:
+ci images:
   extends: .debos
   stage: image
   variables:
     ARCHITECTURE: arm64
     SUITE: trixie
   script:
-    # download u-boot and kernel from GitLab artifacts
-    - ./download-rk3588-artifacts.sh
-
     # initramfs for CI
     - debos --artifactdir=out
             -t architecture:$ARCHITECTURE
@@ -36,6 +33,16 @@ rk3588 images:
             -t architecture:$ARCHITECTURE
             -t suite:$SUITE
             ci-rootfs.yaml
+
+rk3588 images:
+  extends: .debos
+  stage: image
+  variables:
+    ARCHITECTURE: arm64
+    SUITE: trixie
+  script:
+    # download u-boot and kernel from GitLab artifacts
+    - ./download-rk3588-artifacts.sh
 
     # ospack
     - debos --artifactdir=out
