@@ -41,6 +41,7 @@ actions:
       - bsdextrautils
       - lm-sensors
       - libiio-utils
+      - util-linux-extra
 
   - action: run
     description: Enable systemd network services
