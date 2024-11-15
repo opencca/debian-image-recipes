@@ -11,6 +11,7 @@ actions:
     suite: {{ $suite }}
     components:
       - main
+      - non-free-firmware
     mirror: https://deb.debian.org/debian
 
   - action: run

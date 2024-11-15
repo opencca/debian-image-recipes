@@ -7,6 +7,7 @@ actions:
     suite: {{ $suite }}
     components:
       - main
+      - non-free-firmware
     mirror: http://deb.debian.org/debian
     merged-usr: true
     variant: minbase
@@ -42,6 +43,7 @@ actions:
       - lm-sensors
       - libiio-utils
       - util-linux-extra
+      - firmware-linux-nonfree
 
   - action: run
     description: Enable systemd network services

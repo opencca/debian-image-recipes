@@ -27,7 +27,8 @@ actions:
      - librockchip-mpp1
      - librockchip-vpu0
 
-  - action: overlay
+  - action: apt
     description: Install mali firmware
-    source: overlays/mali-firmware
+    packages:
+     - firmware-linux-nonfree
 

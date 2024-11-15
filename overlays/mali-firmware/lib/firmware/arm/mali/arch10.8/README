@@ -1,4 +1,0 @@
-Contains binary fw file we want to keep control over.
-
-- mali_csffw.bin:
-  From https://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git/tree/arm/mali/arch10.8/mali_csffw.bin?id=3b128b6069267b60a46a4074c383183177ee6e6d
