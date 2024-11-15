@@ -34,14 +34,7 @@ actions:
       - psmisc
       - netcat-openbsd
       - wget
-      - evtest
-      - usbutils
-      - pciutils
-      - v4l-utils
-      - i2c-tools
       - bsdextrautils
-      - lm-sensors
-      - libiio-utils
       - util-linux-extra
       - firmware-linux-nonfree
 

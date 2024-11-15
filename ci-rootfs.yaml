@@ -20,6 +20,20 @@ actions:
       - stress-ng
       # Image write tests
       - bmap-tools
+      # Input device testing
+      - evtest
+      # USB device testing
+      - usbutils
+      # PCI device testing
+      - pciutils
+      # V4L2 device testing
+      - v4l-utils
+      # I2C device testing
+      - i2c-tools
+      # HWMON device testing
+      - lm-sensors
+      # IIO device testing
+      - libiio-utils
 
   - action: run
     description: Create fake kernel config to please mkinitramfs
