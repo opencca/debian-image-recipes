@@ -49,6 +49,11 @@ actions:
     packages:
       - systemd-timesyncd
 
+  - action: apt
+    description: Install systemd-repart for mmc partition resizing
+    packages:
+      - systemd-repart
+
   - action: overlay
     description: Enable DHCP IP on Ethernet connections
     source: overlays/network-wired
