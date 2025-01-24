@@ -14,7 +14,7 @@ to download prebuilt images for your target. Extract the archive somewhere.
 It is recommended to use `rockusb` from the [rockchiprs](https://github.com/collabora/rockchiprs)
 Rust crate to flash the images to the board. It can be installed with:
 ```
-$ cargo install rockusb --example rockusb
+$ cargo install rockusb --example rockusb --features=libusb
 ```
 
 ## Remove preinstalled bootloader from SPI Flash
