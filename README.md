@@ -70,7 +70,11 @@ The root partition and filesystem is resized on first boot to take up all
 remaining space on the medium the image has been installed to.
 
 An sshd runs on the default port of 22. The serial console is accessible at
-1.5Mbauds (1500000 baud).
+1.5Mbauds (1500000 baud). The board will announce itself over mDNS, so
+```bash
+$ ssh user@debian-rockchip-rock5b-rk3588.local
+```
+will work if your system has mDNS resolution enabled.
 
 ## Building the images
 
