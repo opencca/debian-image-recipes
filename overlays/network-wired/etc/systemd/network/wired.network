@@ -3,3 +3,7 @@ Name=e*
 
 [Network]
 DHCP=yes
+MulticastDNS=yes
+
+[Link]
+Multicast=yes
