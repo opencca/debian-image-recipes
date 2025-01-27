@@ -104,6 +104,20 @@ actions:
     recipe: gfx-packages.yaml
 {{- end }}
 
+  - action: overlay
+    description: Configure on-demand SSH host key regeneration
+    source: overlays/regen-ssh-host-keys
+
+  - action: run
+    description: Enable on-demand SSH host key regeneration
+    chroot: true
+    command: systemctl enable regen-openssh-keys.service
+
+  - action: run
+    description: Clean rootfs for safe first boot
+    chroot: true
+    script: scripts/clean-rootfs.sh
+
   - action: pack
     description: Pack into tarball
     file: {{ $ospack }}.tar.gz
