@@ -11,8 +11,6 @@ rm -f /etc/ssh/ssh_host_* \
       /var/lib/dbus/machine-id \
       /var/lib/systemd/random-seed \
       /var/lib/systemd/credential.secret
-# Make machine-id uninitialized. This way, the ConditionFirstBoot systemd unit
-# condition works as expected, and the board the image was flashed to gets its
-# own unique machine-id.
+# Make /etc/machine-id an empty file. This way systemd can bind-mount onto it,
+# and fill it with a machine-id, but it won't trigger `ConditionFirstBoot`.
 touch /etc/machine-id
-echo "uninitialized" > /etc/machine-id
