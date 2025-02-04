@@ -1,8 +1,10 @@
 # debian-image-recipes for Rockchip RK3588 boards
 
-Debos recipes to build Debian images for Rockchip rk3588-based boards.
+Debos recipes to build Debian images for Rockchip RK3588-based boards, as well
+as RK3576-based boards.
 
-Currently, only the ROCK 5 Model B is supported by the images.
+Currently, only the ROCK 5 Model B (RK3588) and the Sige5 (RK3576) are supported
+by the images.
 
 These images can be flashed to an SD card or eMMC.
 
@@ -56,10 +58,18 @@ $ rockusb write-bmap image-rockchip-rock5b-rk3588.img.gz
 $ rockusb reset
 ```
 
+The process for the Sige5 board is similar, but substituting the loader with the
+`rk3576_spl_loader_*` binary and the image with the
+`image-rockchip-sige5-rk3576.img.gz` image.
+
 ### Install to SD card
-Copy the image to an SD card using `bmaptool`:
+Copy the image to an SD card using `bmaptool`, assuming `/dev/sdX` as the
+target block device:
 ```
-$ bmaptool copy image-rockchip-rock5b-rk3588.img.gz /dev/mmcblk0
+# For ROCK 5B
+$ bmaptool copy image-rockchip-rock5b-rk3588.img.gz /dev/sdX
+# For Sige5
+$ bmaptool copy image-rockchip-sige5-rk3576.img.gz /dev/sdX
 ```
 
 ## Using the images
@@ -89,13 +99,14 @@ The first stage is to build a generic (but architecture-specific) ospack, then
 assemble the ospack into multiple hardware-specific images.
 
 Linux kernel and u-boot binaries for your specific platform needs to be copied
-into the `prebuilt` directory. See `download-rk3588-artifacts.sh` for the directory
+into the `prebuilt` directory. See `download-rockchip-artifacts.sh` for the directory
 layout.
 
 
 ```bash
-$ ./download-rk3588-artifacts.sh
+$ ./download-rockchip-artifacts.sh
 $ mkdir out
 $ debos --artifactdir=out -t architecture:arm64 ospack-debian.yaml
 $ debos --artifactdir=out -t architecture:arm64 -t platform:rock5b-rk3588 image-rockchip-rk3588.yaml
+$ debos --artifactdir=out -t architecture:arm64 -t platform:sige5-rk3576 image-rockchip-rk3576.yaml
 ```

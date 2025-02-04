@@ -42,7 +42,7 @@ rk3588 images:
     SUITE: trixie
   script:
     # download u-boot and kernel from GitLab artifacts
-    - ./download-rk3588-artifacts.sh
+    - ./download-rockchip-artifacts.sh
 
     # ospack
     - debos --artifactdir=out
@@ -56,3 +56,10 @@ rk3588 images:
             -t suite:$SUITE
             -t platform:rock5b-rk3588
             image-rockchip-rk3588.yaml
+
+    # sige5-rk3576 image
+    - debos --artifactdir=out
+            -t architecture:$ARCHITECTURE
+            -t suite:$SUITE
+            -t platform:sige5-rk3576
+            image-rockchip-rk3576.yaml
