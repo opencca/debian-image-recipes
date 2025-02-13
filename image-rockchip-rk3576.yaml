@@ -45,26 +45,6 @@ actions:
     description: "Configure systemd-repart to grow / at first boot"
     source: overlays/grow-rootfs
 
-  - action: apt
-    description: Install u-boot-menu
-    packages:
-      - u-boot-menu
-
-  - action: apt
-    description: Install initramfs-tools
-    packages:
-      - initramfs-tools
-
-  - action: apt
-    description: Install alsa-ucm-conf
-    packages:
-      - alsa-ucm-conf
-
-  - action: apt
-    description: Install alsa-utils
-    packages:
-      - alsa-utils
-
   - action: run
     command: mkdir -p ${ROOTDIR}/opt/linux
 

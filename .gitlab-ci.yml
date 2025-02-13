@@ -1,13 +1,16 @@
 stages:
-  - image
+  - stage1
+  - stage2
 
 .debos:
-  stage: image
   image:
     name: ghcr.io/go-debos/debos:main
     entrypoint: [ "" ]
   tags:
     - kvm
+  variables:
+    ARCHITECTURE: arm64
+    SUITE: trixie
   before_script:
     - mkdir -p out
   artifacts:
@@ -15,12 +18,9 @@ stages:
     paths:
       - out
 
-ci images:
+ci initramfs image:
   extends: .debos
-  stage: image
-  variables:
-    ARCHITECTURE: arm64
-    SUITE: trixie
+  stage: stage1
   script:
     # initramfs for CI
     - debos --artifactdir=out
@@ -28,27 +28,34 @@ ci images:
             -t suite:$SUITE
             ci-initramfs.yaml
 
+ci rootfs image:
+  extends: .debos
+  stage: stage1
+  script:
     # rootfs for CI
     - debos --artifactdir=out
             -t architecture:$ARCHITECTURE
             -t suite:$SUITE
             ci-rootfs.yaml
 
-rk3588 images:
+prepare debian rootfs:
   extends: .debos
-  stage: image
-  variables:
-    ARCHITECTURE: arm64
-    SUITE: trixie
+  stage: stage1
   script:
-    # download u-boot and kernel from GitLab artifacts
-    - ./download-rockchip-artifacts.sh
-
     # ospack
     - debos --artifactdir=out
             -t architecture:$ARCHITECTURE
             -t suite:$SUITE
             ospack-debian.yaml
+
+rock5b image:
+  extends: .debos
+  stage: stage2
+  needs:
+    - "prepare debian rootfs"
+  script:
+    # download u-boot and kernel from GitLab artifacts
+    - ./download-rock5b-artifacts.sh
 
     # rock5b-rk3588 image
     - debos --artifactdir=out
@@ -56,6 +63,15 @@ rk3588 images:
             -t suite:$SUITE
             -t platform:rock5b-rk3588
             image-rockchip-rk3588.yaml
+
+sige5 image:
+  extends: .debos
+  stage: stage2
+  needs:
+    - "prepare debian rootfs"
+  script:
+    # download u-boot and kernel from GitLab artifacts
+    - ./download-sige5-artifacts.sh
 
     # sige5-rk3576 image
     - debos --artifactdir=out

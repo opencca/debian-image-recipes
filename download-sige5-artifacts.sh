@@ -1,7 +1,7 @@
 #!/bin/sh
 #
-# Downloads the latest artifacts from Collabora GitLab for the Rockchip RK3588
-# and RK3576 image builds.
+# Downloads the latest artifacts from Collabora GitLab for the ArmSom Sige 5
+# image build
 #
 
 # Refuse to overwrite already existing prebuilt directory
@@ -14,11 +14,6 @@ fi
 mkdir -p prebuilt/linux
 wget -O prebuilt/linux/linux.zip "https://gitlab.collabora.com/hardware-enablement/rockchip-3588/linux/-/jobs/artifacts/rk3588/download?job=build%20arm64%20debian%20package"
 unzip -j prebuilt/linux/linux.zip -d prebuilt/linux/
-
-# Download u-boot artifacts for rock5b-rk3588
-mkdir -p prebuilt/u-boot-rock5b-rk3588
-wget -O prebuilt/u-boot-rock5b-rk3588/u-boot.zip "https://gitlab.collabora.com/hardware-enablement/rockchip-3588/u-boot/-/jobs/artifacts/rk3588/download?job=build%20rock-5b"
-unzip -j prebuilt/u-boot-rock5b-rk3588/u-boot.zip -d prebuilt/u-boot-rock5b-rk3588/
 
 # Download u-boot artifacts for sige5-rk3576
 mkdir -p prebuilt/u-boot-sige5-rk3576/
