@@ -6,7 +6,7 @@
 architecture: {{ $architecture }}
 
 actions:
-  - action: debootstrap
+  - action: mmdebstrap
     description: Bootstrap Debian {{ $suite }}
     suite: {{ $suite }}
     components:
@@ -22,6 +22,7 @@ actions:
     description: Allow HTTPS in APT
     packages:
       - apt-transport-https
+      - ca-certificates
 
   - action: overlay
     decription: Add collabora rk3588 hardware enablement repositories
