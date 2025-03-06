@@ -18,16 +18,6 @@ stages:
     paths:
       - out
 
-ci initramfs image:
-  extends: .debos
-  stage: stage1
-  script:
-    # initramfs for CI
-    - debos --artifactdir=out
-            -t architecture:$ARCHITECTURE
-            -t suite:$SUITE
-            ci-initramfs.yaml
-
 ci rootfs image:
   extends: .debos
   stage: stage1
