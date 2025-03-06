@@ -18,15 +18,15 @@ stages:
     paths:
       - out
 
-ci rootfs image:
+ci image:
   extends: .debos
   stage: stage1
   script:
-    # rootfs for CI
+    # rootfs and initramfs for CI
     - debos --artifactdir=out
             -t architecture:$ARCHITECTURE
             -t suite:$SUITE
-            ci-rootfs.yaml
+            ci-image.yaml
 
 prepare debian rootfs:
   extends: .debos
