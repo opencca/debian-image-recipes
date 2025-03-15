@@ -94,6 +94,14 @@ actions:
       - v4l-utils
 
   - action: apt
+    description: Install wireless support packages
+    packages:
+      - bluez
+      - iwd
+      - firmware-realtek
+      - rfkill
+
+  - action: apt
     description: Install some additional useful packages
     packages:
       - zstd
