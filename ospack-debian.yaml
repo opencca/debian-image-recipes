@@ -83,10 +83,15 @@ actions:
   - action: apt
     description: Install hardware debugging packages
     packages:
+      - evtest
+      - i2c-tools
       - iproute2
       - iputils-ping
+      - iw
+      - pciutils
       - traceroute
       - usbutils
+      - v4l-utils
 
   - action: apt
     description: Install some additional useful packages
