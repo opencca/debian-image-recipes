@@ -1,0 +1,157 @@
+{{ $architecture := or .architecture "amd64" }}
+{{ $suite := or .suite "trixie" }}
+{{ $ospack := or .ospack (printf "ospack-debian-%s-%s" $architecture $suite) }}
+{{ $gfx := or .gfx "true" }}
+
+architecture: {{ $architecture }}
+
+actions:
+  - action: mmdebstrap
+    description: Bootstrap Debian {{ $suite }}
+    suite: {{ $suite }}
+    components:
+      - main
+      - non-free-firmware
+    mirror: https://deb.debian.org/debian
+
+  - action: run
+    description: Set hostname to debian-{{ $suite }}
+    command: echo "{{ $suite }}" > ${ROOTDIR}/etc/hostname
+
+  - action: apt
+    description: Allow HTTPS in APT
+    packages:
+      - apt-transport-https
+      - ca-certificates
+
+  - action: overlay
+    decription: Add collabora rk3588 hardware enablement repositories
+    source: overlays/repositories
+
+  - action: apt
+    description: Install collabora keyring package
+    package:
+      - collabora-archive-keyring
+
+  - action: apt
+    description: Install systemd
+    packages:
+      - systemd
+      - systemd-sysv
+      - udev
+
+  - action: apt
+    description: Install systemd-resolved
+    packages:
+      - systemd-resolved
+
+  - action: apt
+    description: Install systemd-timesyncd
+    packages:
+      - systemd-timesyncd
+
+  - action: apt
+    description: Install systemd-repart for mmc partition resizing
+    packages:
+      - systemd-repart
+
+  - action: overlay
+    description: Enable DHCP IP on Ethernet connections
+    source: overlays/network-wired
+
+  - action: run
+    description: Enable systemd-networkd
+    chroot: true
+    command: systemctl enable systemd-networkd
+
+  - action: apt
+    description: Install packages for scripts/setup-user.sh
+    packages:
+      - sudo
+      - adduser
+
+  - action: run
+    description: Setup user
+    chroot: true
+    script: scripts/setup-user.sh
+
+  - action: apt
+    description: Install basic userspace packages
+    packages:
+      - vim-tiny
+
+  - action: apt
+    description: Install hardware debugging packages
+    packages:
+      - evtest
+      - i2c-tools
+      - iproute2
+      - iputils-ping
+      - iw
+      - pciutils
+      - traceroute
+      - usbutils
+      - v4l-utils
+
+  - action: apt
+    description: Install wireless support packages
+    packages:
+      - bluez
+      - iwd
+      - firmware-realtek
+      - rfkill
+
+  - action: apt
+    description: Install some additional useful packages
+    packages:
+      - zstd
+      - unzip
+      - curl
+
+  - action: apt
+    description: Install SSH server
+    packages:
+      - openssh-server
+
+  - action: apt
+    description: Install u-boot-menu
+    packages:
+      - u-boot-menu
+
+  - action: apt
+    description: Install initramfs-tools
+    packages:
+      - initramfs-tools
+
+  - action: apt
+    description: Install alsa-ucm-conf
+    packages:
+      - alsa-ucm-conf
+
+  - action: apt
+    description: Install alsa-utils
+    packages:
+      - alsa-utils
+
+{{- if eq $gfx "true" }}
+  - action: recipe
+    recipe: gfx-packages.yaml
+{{- end }}
+
+  - action: overlay
+    description: Configure on-demand SSH host key regeneration
+    source: overlays/regen-ssh-host-keys
+
+  - action: run
+    description: Enable on-demand SSH host key regeneration
+    chroot: true
+    command: systemctl enable regen-openssh-keys.service
+
+  - action: run
+    description: Clean rootfs for safe first boot
+    chroot: true
+    script: scripts/clean-rootfs.sh
+
+  - action: pack
+    description: Pack into tarball
+    file: {{ $ospack }}.tar.gz
