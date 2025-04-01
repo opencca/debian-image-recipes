@@ -10,3 +10,5 @@ adduser user render
 adduser user input
 adduser user audio
 echo "user:user" | chpasswd
+
+echo '%sudo ALL=(ALL:ALL) NOPASSWD: ALL' | sudo tee /etc/sudoers.d/99_nopasswd_sudo

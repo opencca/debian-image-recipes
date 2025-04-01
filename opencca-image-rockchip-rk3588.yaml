@@ -3,8 +3,8 @@
 {{ $ospack := or .ospack (printf "ospack-debian-%s-%s" $architecture $suite) }}
 {{ $imagesize := or .imagesize "4GB" }}
 {{ $platform := or .platform "unknown" }}
-{{ $cmdline := or .cmdline "rootwait" }}
-{{ $image := or .image (printf "image-rockchip-%s" $platform) }}
+{{ $cmdline := or .cmdline "rootwait maxcpus=2" }}
+{{ $image := or .image (printf "opencca-image-rockchip-%s" $platform) }}
 
 architecture: {{ $architecture }}
 
@@ -41,9 +41,14 @@ actions:
     setup-kernel-cmdline: true
     append-kernel-cmdline: {{ $cmdline }}
 
+  - action: overlay
+    description: Overlay u-boot configuration
+    source: overlays/opencca/u-boot
+    destination: /
+
   - action: run
-    description: Set hostname to debian-rockchip-{{ $platform }}
-    command: echo "debian-rockchip-{{ $platform }}" > ${ROOTDIR}/etc/hostname
+    description: Set hostname to opencca-{{ $platform }}
+    command: echo "opencca-{{ $platform }}" > ${ROOTDIR}/etc/hostname
 
   - action: overlay
     description: "Configure systemd-repart to grow / at first boot"
@@ -65,6 +70,39 @@ actions:
     description: Install kernel
     chroot: true
     command: apt-get install ./opt/linux/*.deb
+
+  - action: overlay
+    description: Overlay opencca bin
+    source: overlays/opencca/bin/
+    destination: /usr/bin/
+
+  - action: overlay
+    description: Overlay opencca hello scripts
+    source: overlays/opencca/hello_scripts/
+    destination: /home/user/
+
+  - action: overlay
+    description: Overlay /etc/systemd
+    source: overlays/opencca/tty/etc/systemd/system/serial-getty@ttyS2.service.d/
+    destination: /etc/systemd/system/serial-getty@ttyS2.service.d/
+
+  - action: apt
+    description: install opencca packages
+    packages:
+      - sshfs
+      - emacs-nox
+      - screen
+      - figlet
+
+  - action: run
+    description: Fix permissions in user directory
+    chroot: true
+    command: chown -R user:user /home/user
+
+  - action: run
+    description: Figlet welcome
+    chroot: true
+    command: echo "figlet 'OpenCCA'" >> /home/user/.bashrc
 
   - action: run
     description: Check extlinux contents
