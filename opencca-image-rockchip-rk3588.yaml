@@ -122,11 +122,11 @@ actions:
     partition: loader2
     offset: 0
 
-  - action: run
-    description: Copy USB loader binary to output directory
-    chroot: false
-    postprocess: true
-    command: cp $RECIPEDIR/prebuilt/u-boot-{{ $platform }}/rk3588_spl_loader_*.bin $ARTIFACTDIR/
+  # - action: run
+  #   description: Copy USB loader binary to output directory
+  #   chroot: false
+  #   postprocess: true
+  #   command: cp $RECIPEDIR/prebuilt/u-boot-{{ $platform }}/rk3588_spl_loader_*.bin $ARTIFACTDIR/
 
   - action: run
     description: Create block map for {{ $image }}.img
