@@ -3,7 +3,7 @@
 {{ $ospack := or .ospack (printf "ospack-debian-%s-%s" $architecture $suite) }}
 {{ $imagesize := or .imagesize "4GB" }}
 {{ $platform := or .platform "unknown" }}
-{{ $cmdline := or .cmdline "rootwait maxcpus=2" }}
+{{ $cmdline := or .cmdline "rootwait isolcpus=1,2,3 maxcpus=2 nohlt cpuidle.off=1 rcupdate.rcu_cpu_st" }}
 {{ $image := or .image (printf "opencca-image-rockchip-%s" $platform) }}
 
 architecture: {{ $architecture }}
@@ -133,6 +133,17 @@ actions:
     chroot: false
     postprocess: true
     command: bmaptool create $ARTIFACTDIR/{{ $image }}.img > $ARTIFACTDIR/{{ $image }}.bmap
+
+  - action: run
+    description: Extract rootfs ext4 partition to separate file
+    chroot: false
+    postprocess: true
+    command: |
+      IMAGE="$ARTIFACTDIR/{{ $image }}.img"
+      OUTPUT="$ARTIFACTDIR/vm-rootfs.ext4"
+      SECTOR_SIZE=512
+      ROOT_START_SECTOR=32768
+      dd if="$IMAGE" of="$OUTPUT" bs=$SECTOR_SIZE skip=$ROOT_START_SECTOR status=progress
 
   - action: run
     description: Compress {{ $image }}.img
