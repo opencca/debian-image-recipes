@@ -9,4 +9,4 @@
 host=${host-user@host}
 path=${path:-/path/on/remote/host}
 
-sudo sshfs -o allow_other,default_permissions $host:$path /mnt -o IdentityFile=/home/user/.ssh/id_rsa
+sudo sshfs -o allow_other,default_permissions $host:$path /mnt -o IdentityFile=/home/user/.ssh/id_ed25519
