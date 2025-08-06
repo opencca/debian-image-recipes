@@ -16,7 +16,7 @@ fi
 FIRMWARE_BRANCH=opencca/main
 FIRMWARE_URL="https://github.com/opencca/opencca-releases/releases/download/firmware/snapshot/${FIRMWARE_BRANCH}/latest/firmware.tar.gz"
 
-LINUX_BRANCH=opencca/next
+LINUX_BRANCH=opencca/main
 LINUX_URL="https://github.com/opencca/opencca-releases/releases/download/linux/snapshot/${LINUX_BRANCH}/latest/linux.tar.gz"
 
 set -x
