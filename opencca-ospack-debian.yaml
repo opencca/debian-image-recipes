@@ -29,11 +29,6 @@ actions:
     source: overlays/repositories
 
   - action: apt
-    description: Install collabora keyring package
-    package:
-      - collabora-archive-keyring
-
-  - action: apt
     description: Install systemd
     packages:
       - systemd
