@@ -6,6 +6,16 @@
 OpenCCA Root Filesystem  
 https://opencca.github.io/
 
+### Mali Drivers
+
+To install the userspace drivers on an existing install that uses the 6.12 kernel with kbase support, copy the mali directory to the device and run `install-mali-opencl.sh`
+
+This also adds your user to the 'video' group.
+To apply the change in the current session run:
+
+`newgrp video`
+
+OpenCL should then work without rebooting.
 
 ### Prepare
 ```
